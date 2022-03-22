@@ -1,4 +1,4 @@
-import { AnyAction, Reducer } from "redux";
+import { Reducer } from "redux";
 import { ProductDetailsAction, ProductDetailsReducerAction } from "../actions/productDetailsAction";
 
 export interface ProductVariant {
