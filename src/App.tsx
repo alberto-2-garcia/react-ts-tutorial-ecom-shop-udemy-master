@@ -18,9 +18,9 @@ const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(sagaM
 
 sagaMiddleware.run(startRootSaga);
 
-store.dispatch({ type: ProductDetailsAction.FETCH_PRODUCTS_DETAILS });
+// store.dispatch({ type: ProductDetailsAction.FETCH_PRODUCTS_DETAILS, options: {} });
 
-(window as any).shopspree = store;
+// (window as any).shopspree = store;
 
 function App() {
   return (

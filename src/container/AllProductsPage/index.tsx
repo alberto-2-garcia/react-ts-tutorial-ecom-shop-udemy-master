@@ -1,14 +1,19 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import './styles.scss';
-import { connect, MapStateToProps } from 'react-redux'
+import { connect, MapDispatchToPropsFunction, MapStateToProps } from 'react-redux'
 import ProductCard from '../../components/ProductCard'
 import { StoreStateType } from '../../store/rootReducer'
-import { AllProductsOwnProps, AllProductsPageProps, AllProductsStateProps } from './interface'
+import { AllProductsDispatchToProps, AllProductsOwnProps, AllProductsPageProps, AllProductsStateProps } from './interface'
+import { ProductDetailsAction } from '../../store/actions/productDetailsAction';
 
-const AllProductsPage: FC<AllProductsPageProps> = ({ productDetails }) => {
+const AllProductsPage: FC<AllProductsPageProps> = ({ shopProducts, fetchShopProducts }) => {
+  useEffect(() => {
+    fetchShopProducts({});
+  }, []);
+
   return (
     <div className='all-products-page-container'>
-      {productDetails.products.map(({ title, variants, id}) => (
+      {shopProducts.products.map(({ title, variants, id }) => (
         <div key={id} className='product-item-container'>
           <ProductCard url={variants[0].image} name={title} />
         </div>
@@ -19,8 +24,15 @@ const AllProductsPage: FC<AllProductsPageProps> = ({ productDetails }) => {
 
 const mapStateToProps: MapStateToProps<AllProductsStateProps, AllProductsOwnProps, StoreStateType> = (state) => {
   return {
-    productDetails: state.productDetails
+    shopProducts: state.productDetails.shopProducts
   }
 }
 
-export default connect(mapStateToProps)(AllProductsPage);
+const mapDispatchToProps: MapDispatchToPropsFunction<AllProductsDispatchToProps, AllProductsOwnProps> = (dispatch) => {
+  const { fetchShopProducts } = new ProductDetailsAction();
+  return {
+    fetchShopProducts: (options) => dispatch(fetchShopProducts(options))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AllProductsPage);

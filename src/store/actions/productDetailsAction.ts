@@ -1,30 +1,33 @@
-import { ProductDetails } from "../reducers/productDetailsReducer";
+import { GetProductsOptions } from "../../api/productsDetailsAPI";
+import { ShopProducts } from "../reducers/productDetailsReducer";
 
-export type ProductDetailsReducerAction = ProductDetailsFetchAction | ProductDetailsSetAction;
+export type ProductDetailsReducerAction = FetchShopProductsAction | SetShopProductsAction;
 
-export interface ProductDetailsSetAction {
-  type: typeof ProductDetailsAction.SET_PRODUCTS_DETAILS;
-  productDetails: ProductDetails;
+export interface SetShopProductsAction {
+  type: typeof ProductDetailsAction.SET_SHOP_PRODUCTS;
+  shopProducts: ShopProducts;
 }
 
-export interface ProductDetailsFetchAction {
-  type: typeof ProductDetailsAction.FETCH_PRODUCTS_DETAILS;
+export interface FetchShopProductsAction {
+  type: typeof ProductDetailsAction.FETCH_SHOP_PRODUCTS;
+  options: GetProductsOptions;
 }
 
 export class ProductDetailsAction {
-  static readonly FETCH_PRODUCTS_DETAILS = 'FETCH_PRODUCTS_DETAILS';
-  static readonly SET_PRODUCTS_DETAILS = 'SET_PRODUCTS_DETAILS';
+  static readonly FETCH_SHOP_PRODUCTS = 'FETCH_SHOP_PRODUCTS';
+  static readonly SET_SHOP_PRODUCTS = 'SET_SHOP_PRODUCTS';
 
-  fetch = (): ProductDetailsFetchAction => {
+  fetchShopProducts= (options: GetProductsOptions): FetchShopProductsAction => {
     return {
-      type: ProductDetailsAction.FETCH_PRODUCTS_DETAILS
+      type: ProductDetailsAction.FETCH_SHOP_PRODUCTS,
+      options
     }
   }
 
-  set = (productDetails: ProductDetails): ProductDetailsSetAction => {
+  setShopProducts = (shopProducts: ShopProducts): SetShopProductsAction => {
     return {
-      type: ProductDetailsAction.SET_PRODUCTS_DETAILS,
-      productDetails
+      type: ProductDetailsAction.SET_SHOP_PRODUCTS,
+      shopProducts
     }
   }
 }

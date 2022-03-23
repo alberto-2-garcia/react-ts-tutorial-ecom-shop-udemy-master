@@ -1,7 +1,7 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import ProductsDetailsAPI from '../../api/productsDetailsAPI';
-import { ProductDetailsAction } from '../actions/productDetailsAction';
-import { ProductDetails } from '../reducers/productDetailsReducer';
+import { ProductDetailsAction, FetchShopProductsAction } from '../actions/productDetailsAction';
+import { ShopProducts } from '../reducers/productDetailsReducer';
 
 export interface ResponseGenerator{
   config?:any,
@@ -12,14 +12,14 @@ export interface ResponseGenerator{
   statusText?:string
 }
 
-function* workerFetchProductDetailsSaga() {
+function* workerFetchProductDetailsSaga(action: FetchShopProductsAction) {
   const productsDetailsAPI = new ProductsDetailsAPI();
   const productDetailsAction = new ProductDetailsAction();
   try {
-    const response: ResponseGenerator = yield call(productsDetailsAPI.getProducts);
-    const productDetails = response.data as ProductDetails;
+    const response: ResponseGenerator = yield call(productsDetailsAPI.getProducts, action.options);
+    const shopProducts = response.data as ShopProducts;
   
-    yield put(productDetailsAction.set(productDetails));
+    yield put(productDetailsAction.setShopProducts(shopProducts));
   } catch(err) {
     // TODO: Change in the future
     console.log('err')
@@ -28,5 +28,5 @@ function* workerFetchProductDetailsSaga() {
 }
 
 export function* watchProductDetailsSaga() {
-  yield takeLatest(ProductDetailsAction.FETCH_PRODUCTS_DETAILS, workerFetchProductDetailsSaga);
+  yield takeLatest(ProductDetailsAction.FETCH_SHOP_PRODUCTS, workerFetchProductDetailsSaga);
 }
