@@ -7,8 +7,11 @@ import { AllProductsDispatchToProps, AllProductsOwnProps, AllProductsPageProps, 
 import { ProductDetailsAction } from '../../store/actions/productDetailsAction';
 
 const AllProductsPage: FC<AllProductsPageProps> = ({ shopProducts, fetchShopProducts }) => {
+  // eslint-disable-next-line
   useEffect(() => {
-    fetchShopProducts({});
+    if (!shopProducts.products.length) {
+      fetchShopProducts({});
+    }
   }, []);
 
   return (

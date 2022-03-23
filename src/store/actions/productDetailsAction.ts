@@ -1,7 +1,7 @@
 import { GetProductsOptions } from "../../api/productsDetailsAPI";
-import { ShopProducts } from "../reducers/productDetailsReducer";
+import { Product, ShopProducts } from "../reducers/productDetailsReducer";
 
-export type ProductDetailsReducerAction = FetchShopProductsAction | SetShopProductsAction;
+export type ProductDetailsReducerAction = FetchShopProductsAction | SetShopProductsAction | SetBestSellerProductsAction | FetchBestSellerProductsAction;
 
 export interface SetShopProductsAction {
   type: typeof ProductDetailsAction.SET_SHOP_PRODUCTS;
@@ -13,9 +13,20 @@ export interface FetchShopProductsAction {
   options: GetProductsOptions;
 }
 
+export interface SetBestSellerProductsAction {
+  type: typeof ProductDetailsAction.SET_BEST_SELLER_PRODUCTS;
+  bestSellerProducts: Product[];
+}
+
+export interface FetchBestSellerProductsAction {
+  type: typeof ProductDetailsAction.FETCH_ALL_BEST_SELLER_PRODUCTS;
+}
+
 export class ProductDetailsAction {
   static readonly FETCH_SHOP_PRODUCTS = 'FETCH_SHOP_PRODUCTS';
   static readonly SET_SHOP_PRODUCTS = 'SET_SHOP_PRODUCTS';
+  static readonly FETCH_ALL_BEST_SELLER_PRODUCTS = 'FETCH_ALL_BEST_SELLER_PRODUCTS';
+  static readonly SET_BEST_SELLER_PRODUCTS = 'SET_BEST_SELLER_PRODUCTS';
 
   fetchShopProducts= (options: GetProductsOptions): FetchShopProductsAction => {
     return {
@@ -28,6 +39,19 @@ export class ProductDetailsAction {
     return {
       type: ProductDetailsAction.SET_SHOP_PRODUCTS,
       shopProducts
+    }
+  }
+
+  fetchAllBestSellerProducts = (): FetchBestSellerProductsAction => {
+    return {
+      type: ProductDetailsAction.FETCH_ALL_BEST_SELLER_PRODUCTS
+    }
+  }
+
+  setBestSellerProducts = (bestSellerProducts: Product[]): SetBestSellerProductsAction => {
+    return {
+      type: ProductDetailsAction.SET_BEST_SELLER_PRODUCTS,
+      bestSellerProducts
     }
   }
 }

@@ -12,7 +12,7 @@ export interface ResponseGenerator{
   statusText?:string
 }
 
-function* workerFetchProductDetailsSaga(action: FetchShopProductsAction) {
+function* workerFetchShopProductsSaga(action: FetchShopProductsAction) {
   const productsDetailsAPI = new ProductsDetailsAPI();
   const productDetailsAction = new ProductDetailsAction();
   try {
@@ -24,9 +24,23 @@ function* workerFetchProductDetailsSaga(action: FetchShopProductsAction) {
     // TODO: Change in the future
     console.log('err')
   }
+}
 
+function* workerFetchBestSellerSaga() {
+  const productsDetailsAPI = new ProductsDetailsAPI();
+  const productDetailsAction = new ProductDetailsAction();
+  try {
+    const response: ResponseGenerator = yield call(productsDetailsAPI.getProducts, { category: ['Best Seller'] });
+    const { products } = response.data as ShopProducts;
+  
+    yield put(productDetailsAction.setBestSellerProducts(products));
+  } catch(err) {
+    // TODO: Change in the future
+    console.log('err')
+  }
 }
 
 export function* watchProductDetailsSaga() {
-  yield takeLatest(ProductDetailsAction.FETCH_SHOP_PRODUCTS, workerFetchProductDetailsSaga);
+  yield takeLatest(ProductDetailsAction.FETCH_SHOP_PRODUCTS, workerFetchShopProductsSaga);
+  yield takeLatest(ProductDetailsAction.FETCH_ALL_BEST_SELLER_PRODUCTS, workerFetchBestSellerSaga);
 }

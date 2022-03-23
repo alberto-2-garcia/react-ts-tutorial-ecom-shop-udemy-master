@@ -1,31 +1,44 @@
-import React from 'react';
+import { FC, useEffect } from 'react';
 import './styles.scss';
 import ProductCard from '../../components/ProductCard';
+import { connect, MapDispatchToPropsFunction, MapStateToProps } from 'react-redux';
+import { BestSellerDispatchProps, BestSellerProps, BestSellerStateProps } from './interface';
+import { StoreStateType } from '../../store/rootReducer';
+import { ProductDetailsAction } from '../../store/actions/productDetailsAction';
 
-export default function BestSeller() {
-  const products = [
-    {
-      name: 'Formal Dress Shirts Casual Long Sleeve Slim Fit',
-      url: 'http://localhost:1234/public/images/Formal%20Dress%20Shirts%20Casual%20Long%20Sleeve%20Slim%20Fit%20-%20Blue.png'
-    },
-    {
-      name: 'Formal Dress Shirts Casual Short Sleeve Slim Fit',
-      url: 'http://localhost:1234/public/images/Formal%20Dress%20Shirts%20Casual%20Short%20Sleeve%20Slim%20Fit%20-%20Blue.png'
-    },
-    {
-      name: 'Soft Summer Short Slim Fit',
-      url: 'http://localhost:1234/public/images/Soft%20Summer%20Short%20Slim%20Fit%20-%20Gray.png'
+const BestSeller: FC<BestSellerProps> = ({ fetchAllBestSellerProducts, bestSellerProducts }) => {
+  // eslint-disable-next-line
+  useEffect(() => {
+    if(!bestSellerProducts.length) {
+      fetchAllBestSellerProducts();
     }
-  ];
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <div className='best-seller-container'>
       <h2> Best Seller </h2>
       <div className='best-seller-products'>
-        {products.map(({ name, url }) => (
-          <ProductCard key={name} name={name} url={url} />
+        {bestSellerProducts.map(({ title, id, variants }) => (
+          <ProductCard key={id} name={title} url={variants[0].image} />
         ))}
       </div>
     </div>
   )
 }
+
+const mapStateToProps: MapStateToProps<BestSellerStateProps, {}, StoreStateType> = (state) => {
+  return {
+    bestSellerProducts: state.productDetails.bestSellerProducts
+  }
+}
+
+const mapDispatchToProps: MapDispatchToPropsFunction<BestSellerDispatchProps, {}> = (dispatch) => {
+  const { fetchAllBestSellerProducts } = new ProductDetailsAction();
+
+  return {
+    fetchAllBestSellerProducts: () => dispatch(fetchAllBestSellerProducts())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(BestSeller);
