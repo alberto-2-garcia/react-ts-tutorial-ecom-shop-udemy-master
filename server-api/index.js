@@ -7,7 +7,11 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const productsJsonPath = path.join(__dirname, '/products.json');
+const productsFiltersJsonPath = path.join(__dirname, '/productFilters.json');
+
 const products = JSON.parse(fs.readFileSync(productsJsonPath, { encoding: 'utf-8' }));
+const productFilters = JSON.parse(fs.readFileSync(productsFiltersJsonPath, { encoding: 'utf-8' }));
+
 
 app.use(bodyParser.json());
 
@@ -16,24 +20,36 @@ app.use(cors());
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
+/** Get Product Filters 
+ * http://localhost:1234/product/filters
+*/
+app.get('/filters', (req,res) => {
+    res.json({ productFilters })
+})
+
 /** Get All Products
- * Query params - page/size
- * http://localhost:1234/products?page=2&size=3
- * http://localhost:1234/products?size=3
- * http://localhost:1234/products
+ * Query params - page/size/category
+ * http://localhost:1234/product/all?page=2&size=3
+ * http://localhost:1234/product/all?size=3
+ * http://localhost:1234/product/all
  */
 app.get('/products', (req, res) => {
-    const { page, size } = req.query;
+    const { page, size, category } = req.query;
     const data = {};
     let productsToReturn = [];
-    if((page && size) || size) {
+
+    if((page && size) || size || category) {
         let currentPage = 1;
         let currentSize = 0;
         const pageInt = parseInt(page) || 1;
-        const sizeInt = parseInt(size);
+        const sizeInt = parseInt(size) || products.length;
         data.page = pageInt;
 
         products.forEach((product) => {
+            if(category && !hasProductInCategory(category, product.category)) {
+                return ;
+            }
+
             if(currentSize === sizeInt) {
                 currentPage++;
                 currentSize = 0;
@@ -47,6 +63,8 @@ app.get('/products', (req, res) => {
 
             currentSize++;
         });
+
+        data.totalPages = currentPage;
     } else {
         productsToReturn = products;
     }
@@ -56,7 +74,6 @@ app.get('/products', (req, res) => {
 
     res.json(data);
 });
-
 /** Add/Update product
  * http://localhost:1234/product
  * Sample Format
